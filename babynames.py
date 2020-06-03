@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Your name, plus anyone who helped you with this assignment.
+# Give credit where credit is due.
+
 # BabyNames python coding exercise.
+__author__ = "Chris Warren with help from Kano Marvel"
+
 
 # Copyright 2010 Google Inc.
 # Licensed under the Apache License, Version 2.0
@@ -35,7 +40,6 @@ import sys
 import re
 import argparse
 
-
 def extract_names(filename):
     """
     Given a single file name for babyXXXX.html, returns a
@@ -44,9 +48,27 @@ def extract_names(filename):
     ['2006', 'Aaliyah 91', 'Aaron 57', 'Abagail 895', ...]
     """
     names = []
-    # +++your code here+++
-    return names
+    name_dict = {}
 
+    with open(filename) as f:
+        contents = f.read()
+        pattern = re.compile(r'Popularity in')
+        matches = pattern.finditer(contents)
+        for match in matches:
+            year = match.span()
+            names.append(contents[year[1]:][1:5])
+    with open(filename) as l:    
+        for line in l:
+            rank_name = re.findall(r'"right"><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td>', line)
+            for name in rank_name:
+                if not name[1] in name_dict:
+                    name_dict[name[1]] = name[0]
+                if not name[2] in name_dict:
+                    name_dict[name[2]] = name[0]
+    for key in sorted(name_dict):
+        names.append(key + " " + name_dict[key])
+
+    return names
 
 def create_parser():
     """Create a command line parser object with 2 argument definitions."""
@@ -54,27 +76,33 @@ def create_parser():
         description="Extracts and alphabetizes baby names from html.")
     parser.add_argument(
         '--summaryfile', help='creates a summary file', action='store_true')
+
     # The nargs option instructs the parser to expect 1 or more
     # filenames. It will also expand wildcards just like the shell.
     # e.g. 'baby*.html' will work.
+
     parser.add_argument('files', help='filename(s) to parse', nargs='+')
+    
     return parser
 
-
 def main(args):
+
     # Create a command line parser object with parsing rules
+
     parser = create_parser()
+
     # Run the parser to collect command line arguments into a
     # NAMESPACE called 'ns'
-    ns = parser.parse_args(args)
 
+    ns = parser.parse_args(args)
+    
     if not ns:
         parser.print_usage()
         sys.exit(1)
-
     file_list = ns.files
 
     # option flag
+
     create_summary = ns.summaryfile
 
     # For each filename, call `extract_names()` with that single file.
@@ -82,8 +110,15 @@ def main(args):
     # Use the create_summary flag to decide whether to print the list
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
 
-    # +++your code here+++
-
+    for each in file_list:
+        each_file = extract_names(each)
+        each_file = "\n".join(each_file)
+        if not create_summary:
+            print(each_file)
+        else:
+            new_file = each + ".summary"
+            f = open(new_file, "w")
+            f.write(str(each_file))
 
 if __name__ == '__main__':
     main(sys.argv[1:])
