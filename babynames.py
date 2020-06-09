@@ -40,6 +40,7 @@ import sys
 import re
 import argparse
 
+
 def extract_names(filename):
     """
     Given a single file name for babyXXXX.html, returns a
@@ -69,6 +70,7 @@ def extract_names(filename):
         names.append(key + " " + name_dict[key])
 
     return names
+    
 
 def create_parser():
     """Create a command line parser object with 2 argument definitions."""
