@@ -58,6 +58,7 @@ def extract_names(filename):
         for match in matches:
             year = match.span()
             names.append(contents[year[1]:][1:5])
+
     with open(filename) as l:    
         for line in l:
             rank_name = re.findall(r'"right"><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td>', line)
@@ -66,6 +67,7 @@ def extract_names(filename):
                     name_dict[name[1]] = name[0]
                 if not name[2] in name_dict:
                     name_dict[name[2]] = name[0]
+                    
     for key in sorted(name_dict):
         names.append(key + " " + name_dict[key])
 
@@ -82,7 +84,6 @@ def create_parser():
     # The nargs option instructs the parser to expect 1 or more
     # filenames. It will also expand wildcards just like the shell.
     # e.g. 'baby*.html' will work.
-
     parser.add_argument('files', help='filename(s) to parse', nargs='+')
     
     return parser
@@ -90,12 +91,10 @@ def create_parser():
 def main(args):
 
     # Create a command line parser object with parsing rules
-
     parser = create_parser()
 
     # Run the parser to collect command line arguments into a
     # NAMESPACE called 'ns'
-
     ns = parser.parse_args(args)
     
     if not ns:
@@ -104,14 +103,12 @@ def main(args):
     file_list = ns.files
 
     # option flag
-
     create_summary = ns.summaryfile
 
     # For each filename, call `extract_names()` with that single file.
     # Format the resulting list as a vertical list (separated by newline \n).
     # Use the create_summary flag to decide whether to print the list
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
-
     for each in file_list:
         each_file = extract_names(each)
         each_file = "\n".join(each_file)
@@ -124,3 +121,4 @@ def main(args):
 
 if __name__ == '__main__':
     main(sys.argv[1:])
+    
